@@ -22,8 +22,8 @@ function defaultMD() {/*
 ## Are you ready???
 
 */
-  var myExt = defaultMD + '';
-  
+  var comment = /\/\*(\*(?!\/)|[^*])*\*\//m.exec(defaultMD+'')[0];
+  return comment.slice(2, comment.length-2);
 }
 
 //</script>
