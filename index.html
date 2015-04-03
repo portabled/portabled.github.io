@@ -1,29 +1,124 @@
-// PLEASE ENABLE JAVASCRIPT<script>var asHTML=true;</script><script> // this can be used as HTML too!
+// please enable JavaScript to see the content // <script>var asHTML=true;</script><script> // this can be used as HTML too!
 bootME();
 
-function bootME(md) {
+function bootME() {
   if (window.asHTML) {
-    showMD(defaultMD());
+    showMD(getText(defaultMD));
     return;
   }
 
+  
+
   function showMD(md) {
-    alert(md);
+    var ifr = elem('iframe', {
+      position: 'absolute',
+      left: 0, top: 0,
+      width: '100%', height: '100%',
+      border: 'none'
+    });
+    ifr.src = 'about:blank';
+    document.body.appendChild(ifr);
+
+    var ifrwin = ifr.contentWindow || ifr.window;
+    var ifrdoc = ifrwin.document;
+
+    ifrdoc.open();
+    ifrdoc.write('<style>'+getText(renderStyle)+'</'+'style><body></body>');
+    ifrdoc.close();
+
+    elem('pre', {
+      text: md
+    }, ifrdoc.body);
+
   }
+
+
 
   function getText(obj) {
-    return (/^(STYLE|SCRIPT)$/i.test(e.tagName) ? e.text : null) ||
-      e.textContent || (e.styleSheet ? e.styleSheet.cssText : null) || e.innerText || e.innerHTML;
-  }
-}
+    var result = (/^(STYLE|SCRIPT)$/i.test(obj.tagName) ? obj.text : null) ||
+      obj.textContent || (obj.styleSheet ? obj.styleSheet.cssText : null) || obj.innerText || obj.innerHTML || null;
 
+    if (!result && typeof obj === 'function') {
+      result = /\/\*(\*(?!\/)|[^*])*\*\//m.exec(obj+'')[0];
+      if (result)
+        result = result.slice(2, result.length-2);
+    }
+
+    return result || null;
+  }
+
+  function setText(obj, text) {
+    if (!/^BODY$/i.test(obj.tagName) && 'text' in obj)
+      obj.text = text;
+    else if ('textContent' in obj)
+      obj.textContent = text;
+    else if ('innerText' in obj)
+      obj.innerText = text;
+    else if ('innerHTML' in obj)
+      obj.innerHTML = text;
+    else if (typeof console !== 'undefined' && typeof console.error === 'function')
+      console.error('Neither text nor textContent nor innerText nor innerHTML is present on element ', obj, ' ' + obj.tagName);
+  }
+
+  function elem(tag, style,parent) {
+  
+    var e = tag.tagName ? tag : this.document.createElement(tag);
+  
+    if (!style && parent && parent.tagName) {
+      parent = style;
+      style = null;
+    }
+  
+    if (style) {
+      if (typeof style === 'string') {
+        setText(e, style);
+      }
+      else {
+        for (var k in style) if (style.hasOwnProperty(k)) {
+          if (k === 'text') {
+            setText(e, style[k]);
+          }
+          else if (k === 'className') {
+            e.className = style[k];
+          }
+          else {
+            try {
+              e.style[k] = style[k];
+            }
+            catch (err) {
+              if (typeof console !== 'undefined' && typeof console.error === 'function')
+                console.error(err);
+            }
+          }
+        }
+      }
+    }
+  
+    if (parent)
+      parent.appendChild(e);
+  
+    return e;
+  } // elem
+
+
+  function renderStyle() {/*
+    body {
+      border: none;
+      background: white;
+      color: black;
+      overflow: auto;
+    }
+  */}
+
+} // bootMD
+
+
+// this one is not preserved when saving
 function defaultMD() {/*
 
 ## Are you ready???
 
 */
-  var comment = /\/\*(\*(?!\/)|[^*])*\*\//m.exec(defaultMD+'')[0];
-  return comment.slice(2, comment.length-2);
 }
 
 //</script>
