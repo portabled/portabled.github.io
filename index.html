@@ -118,9 +118,11 @@ function bootME() {
             catch (err) {
               try {
                 if (typeof console !== 'undefined' && typeof console.error === 'function')
-                  console.error(err);
+                  console.error(e.tagName+'.style.'+k+'='+style[k]+': '+err.message);
               }
-              catch (whatevs) { }
+              catch (whatevs) {
+                alert(e.tagName+'.style.'+k+'='+style[k]+': '+err.message);
+              }
             }
           }
         }
