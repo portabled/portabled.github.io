@@ -26,7 +26,9 @@ function bootME() {
     ifrdoc.write('<style>'+getText(renderStyle)+'</'+'style><body></body>');
     ifrdoc.close();
 
-    elem('pre', {
+    ifrwin.elem = elem;
+
+    ifrwin.elem('pre', {
       text: md
     }, ifrdoc.body);
 
