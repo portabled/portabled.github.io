@@ -28,18 +28,36 @@ function bootME() {
 
     ifrwin.elem = elem;
 
-    ifrwin.elem('pre', {
-      text: md
+    var earlyPre = ifrwin.elem('pre', {
+      text: md,
+      opacity: 0.3
     }, ifrdoc.body);
 
     setTimeout(function() {ifrwin.focus();}, 10);
 
+    var start = +new Date();
+    var downloadAnimation = setInterval(function() {
+      var current = +new Date();
+      var ratio = (current-start) - ((current-start)|0);
+      earlyPre.style.opacity = 0.2+ratio*0.5;
+    }, 20);
+
     downloadText('https://rawgit.com/chjj/marked/master/lib/marked.js', function (markedJS) {
-      ifrwin.eval(
-          'function defineMarked() { window.marked = null; with (window) { '+markedJS+'} }');
-      ifrwin.defineMarked();
-      var mdHTML = ifrwin.marked(md);
-      ifrdoc.body.innerHTML = mdHTML;
+      clearInterval(downloadAnimation);
+      try {
+        ifrwin.eval(
+            'function defineMarked() { window.marked = null; with (window) { '+markedJS+'} }');
+        ifrwin.defineMarked();
+        var mdHTML = ifrwin.marked(md);
+        ifrdoc.body.innerHTML = mdHTML;
+      }
+      catch (renderError) {
+        ifrdoc.body.innerHTML = null;
+        ifrwin.elem('pre', {
+          text: renderError.message+'\n\n'+renderError,
+          color: 'tomato'
+        }, ifrdoc.body);
+      }
     });
 
   }
