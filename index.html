@@ -34,6 +34,10 @@ function bootME() {
 
     setTimeout(function() {ifrwin.focus();}, 10);
 
+    downloadText('https://rawgit.com/chjj/marked/lib/marked.js', function (markedJS) {
+      alert('marked \n'+markedJS);
+    });
+
   }
 
 
@@ -111,13 +115,21 @@ function bootME() {
   } // elem
 
 
-  function downloadText(url, callback) {
-    var xhr = typeof XMLHttpRequest === 'function' ? new XMLHttpRequest() : new ActiveXObject('MSXMLDOM');
+  function downloadText(url, jsonpcallback, callback) {
+    if (!callback) {
+      callback = jsonpcallback;
+      jsonpcallback = null;
+    }
+
+    var xhr = typeof XMLHttpRequest === 'function' ? new XMLHttpRequest() : new ActiveXObject('MSXML2.XMLHTTP.3.0');
     xhr.open('GET', url, true);
     xhr.onreadystatechange = function() {
       if (xhr.readyState!==4) return;
       if (xhr.status!==200) {
-        callback(null);
+        if (!jsonpcallback) {
+          callback(null);
+          return;
+        }
       }
       else {
         callback(xhr.responseText || xhr.response);
