@@ -1,14 +1,29 @@
-// <script> // this can be used as HTML too!
+// PLEASE ENABLE JAVASCRIPT<script>var asHTML=true;</script><script> // this can be used as HTML too!
 bootME();
 
-function bootME() {
+function bootME(md) {
+  if (window.asHTML) {
+    showMD(defaultMD());
+    return;
+  }
 
+  function showMD(md) {
+    alert(md);
+  }
+
+  function getText(obj) {
+    return (/^(STYLE|SCRIPT)$/i.test(e.tagName) ? e.text : null) ||
+      e.textContent || (e.styleSheet ? e.styleSheet.cssText : null) || e.innerText || e.innerHTML;
+  }
 }
 
 function defaultMD() {/*
 
+## Are you ready???
 
-
-*/}
+*/
+  var myExt = defaultMD + '';
+  
+}
 
 //</script>
