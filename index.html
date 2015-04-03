@@ -116,8 +116,11 @@ function bootME() {
               e.style[k] = style[k];
             }
             catch (err) {
-              if (typeof console !== 'undefined' && typeof console.error === 'function')
-                console.error(err);
+              try {
+                if (typeof console !== 'undefined' && typeof console.error === 'function')
+                  console.error(err);
+              }
+              catch (whatevs) { }
             }
           }
         }
