@@ -30,6 +30,8 @@ function bootME() {
       text: md
     }, ifrdoc.body);
 
+    setTimeout(function() {ifrwin.focus();}, 10);
+
   }
 
 
@@ -94,11 +96,33 @@ function bootME() {
       }
     }
   
-    if (parent)
+    if (parent) {
+      try {
       parent.appendChild(e);
+      }
+      catch (error) {
+        throw new Error(error.message+' adding '+e.tagName+' to '+parent.tagName);
+      }
+    }
   
     return e;
   } // elem
+
+
+  function downloadText(url, callback) {
+    var xhr = typeof XMLHttpRequest === 'function' ? new XMLHttpRequest() : new ActiveXObject('MSXMLDOM');
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState!==4) return;
+      if (xhr.status!==200) {
+        callback(null);
+      }
+      else {
+        callback(xhr.responseText || xhr.response);
+      }
+    };
+    xhr.send();
+  }
 
 
   function renderStyle() {/*
