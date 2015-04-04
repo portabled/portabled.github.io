@@ -2,6 +2,18 @@
 bootME();
 
 function bootME() {
+
+  window.onerror = function (a, b, c, d, e, f) {
+    alert(
+      'Error!\n'+
+      (typeof a == 'undefined' ? '':'\n'+a)+
+      (typeof b == 'undefined' ? '':'\n'+b)+
+      (typeof c == 'undefined' ? '':'\n'+c)+
+      (typeof d == 'undefined' ? '':'\n'+d)+
+      (typeof e == 'undefined' ? '':'\n'+e)+
+      (typeof f == 'undefined' ? '':'\n'+f));
+  };
+
   if (window.asHTML) {
     showMD(getText(defaultMD));
     return;
