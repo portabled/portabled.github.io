@@ -103,16 +103,69 @@ function bootME() {
     function withMarked(marked) {
       var mdHTML = ifrwin.marked(md);
       ifrdoc.body.innerHTML = mdHTML;
+
+      setTimeout(addTitle, 10);
+
+      function addTitle() {
+
+        var findH1 = ifrdoc.getElementsByTagName('h1')[0] || ifrdoc.getElementsByTagName('h2')[0];
+
+        var domTitle = elem('h1', {
+          position: 'fixed',
+          top: 0, left: 0,
+          width: '100%', height: '100%',
+          opacity: 0,
+          background: 'white',
+          margin: 0,
+          padding: '0.5em',
+          text: getText(findH1)
+        }, ifrdoc.body);
+
+        var forceTitle = false;
+
+        ifrwin.onscroll = onscroll;
+        ifrdoc.body.onclick = onclick;
+        updateTitleVisibility();
+
+        function onclick() {
+          forceTitle = !forceTitle;
+          updateTitleVisibility();
+        }
+
+        function onscroll() {
+          updateTitleVisibility();
+        }
+
+        function updateTitleVisibility() {
+          if (forceTitle) {
+            setVisibility(1);
+            return;
+          }
+
+          var top = ifrdoc.body.scrollTop || ifrwin.pageYOffset || 0;
+
+          if (!top) {
+            setVisibility(0);
+          }
+          else if (top > domTitle.offsetHeight) {
+            setVisibility(1);
+          }
+          else {
+            var v = top / domTitle.offsetHeight;
+            setVisibility(v);
+          }
+        }
+
+        function setVisibility(v) {
+          domTitle.style.opacity = v;
+        }
+      }
+
     }
 
   }
 
 
-
-  function addTitle() {
-    // TODO: when scrolled down, show title
-    // (that is h1 or h2 from the rendered MD plus some interactivity extras)
-  }
 
 
   function getText(obj) {
