@@ -109,6 +109,12 @@ function bootME() {
 
 
 
+  function addTitle() {
+    // TODO: when scrolled down, show title
+    // (that is h1 or h2 from the rendered MD plus some interactivity extras)
+  }
+
+
   function getText(obj) {
     var result = (/^(STYLE|SCRIPT)$/i.test(obj.tagName) ? obj.text : null) ||
       obj.textContent || (obj.styleSheet ? obj.styleSheet.cssText : null) || obj.innerText || obj.innerHTML || null;
@@ -136,14 +142,14 @@ function bootME() {
   }
 
   function elem(tag, style, parent) {
-  
+
     var e = tag.tagName ? tag : this.document.createElement(tag);
-  
+
     if (!parent && style && style.tagName) {
       parent = style;
       style = null;
     }
-  
+
     if (style) {
       if (typeof style === 'string') {
         setText(e, style);
@@ -173,7 +179,7 @@ function bootME() {
         }
       }
     }
-  
+
     if (parent) {
       try {
       parent.appendChild(e);
@@ -182,7 +188,7 @@ function bootME() {
         throw new Error(error.message+' adding '+e.tagName+' to '+parent.tagName);
       }
     }
-  
+
     return e;
   } // elem
 
