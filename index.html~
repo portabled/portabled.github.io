@@ -23,12 +23,10 @@ function bootME() {
     var bodytext = getText(document.body);
     if (!/^\s*$/.test(bodytext)) {
       var bodypre = document.getElementsByTagName('pre')[0];
-      if (bodypre) {
-        var bodypretext = getText(bodypre);
-        if (bodypretext.replace(/\s/g, '')===bodytext.replace(/\s/g,'')) {
-          showMD(bodypre.innerHTML);
-          return;
-        }
+      var bodypretext = getText(bodypre);
+      if (bodypretext.replace(/\s/g, '')===bodytext.replace(/\s/g,'')) {
+        showMD(bodypre.innerHTML);
+        return;
       }
 
       showMD(document.body.innerHTML);
