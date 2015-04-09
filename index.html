@@ -15,6 +15,13 @@ function bootME() {
   }
 
   if (document.body) {
+    fromBody();
+  }
+  else {
+    window.onload = fromBody();
+  }
+
+  function fromBody() {
     var bodytext = $(document.body).text();
     if (!/^\s*$/.test(bodytext)) {
       var bodypre = document.getElementsByTagName('pre')[0];
