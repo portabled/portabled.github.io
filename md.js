@@ -68,7 +68,6 @@ function bootME() {
     var titleText = findH1 ? getText(findH1) : 'Markdown document';
     document.title = titleText;
 
-    alert('elem '+ifr.window.elem+', window.ActiveXObject '+window.ActiveXObject);
     var domTitle = ifr.window.elem('h1', {
       position: window.ActiveXObject ? 'fixed' : 'absolute',
       top: 0, left: 0,
@@ -270,6 +269,7 @@ function bootME() {
     var ifrdoc = ifrwin.document;
 
     ifrwin.elem = elem;
+    alert('assigned? '+(ifrwin.elem===elem)+'\nifrwin.elem '+(ifrwin.elem+'').slice(0,15)+'\nelem '+(elem+'').slice(0,15));
 
     if (ifrdoc.open) ifrdoc.open();
     ifrdoc.write(
