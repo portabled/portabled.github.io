@@ -21,11 +21,13 @@ function bootME() {
     if (document.body) {
       elem(document.body, {
         margin: 0, padding: 0,
+        height: '100%',
         overflow: 'hidden',
         border: 'none'
       });
       elem(document.documentElement, {
         margin: 0, padding: 0,
+        height: '100%',
         overflow: 'hidden',
         border: 'none'
       });
