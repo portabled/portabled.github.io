@@ -107,6 +107,15 @@ function bootME() {
   }
 
   function elem(tag, style, parent) {
+    try {
+      return elem_core(tag, style, parent);
+    }
+    catch (error) {
+      throw new Error(error.message + ' while elem('+tag+', '+style+', '+parent+')');
+    }
+  }
+
+  function elem_core(tag, style, parent) {
     var e = tag.tagName ? tag : this.document.createElement(tag);
 
     if (!parent && style && style.tagName) {
