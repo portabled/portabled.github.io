@@ -21,11 +21,13 @@ function bootME() {
     if (document.body) {
       elem(document.body, {
         margin: 0, padding: 0,
-        overflow: 'auto' 
+        overflow: 'hidden',
+        border: 'none'
       });
       elem(document.documentElement, {
         margin: 0, padding: 0,
-        overflow: 'auto' 
+        overflow: 'hidden',
+        border: 'none'
       });
       ifr = createIFR();
 
@@ -37,6 +39,8 @@ function bootME() {
       // hide everything if possible
       try { document.documentElement.style.color = 'white'; }
       catch (err) { }
+      try { document.documentElement.style.overflow = 'hidden'; }
+      catch (err) { }
     }
   }
 
@@ -45,8 +49,6 @@ function bootME() {
     if (!ifr) earlyBoot();
 
     var bodyMD = markdownFromDOM();
-
-    alert(bodyMD);
 
     var rendered = marked(bodyMD);
     ifr.document.body.innerHTML = rendered;
