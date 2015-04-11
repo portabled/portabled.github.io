@@ -44,23 +44,23 @@ function bootME() {
 
     if (!ifr) earlyBoot();
 
-    var bodyMD;
-    if (window.ActiveXObject) {
-      var tmpPRE = document.createElement('pre');
-      for (var n = document.body.firstChild; n != null; n = n.nextSibling) {
-        if (n.tagName==='SCRIPT' || n.tagName==='STYLE') continue;
-        tmpPRE.appendChild(n.cloneNode(true));
-      }
-      bodyMD = tmpPRE.innerHTML;
-    }
-    else {
-      bodyMD = document.body.innerHTML;
-    }
+    var bodyMD = markdownFromDOM();
 
     alert(bodyMD);
 
     var rendered = marked(bodyMD);
     ifr.document.body.innerHTML = rendered;
+
+    window['ifr'] = ifr;
+  }
+
+
+  function markdownFromDOM() {
+    var firstPRE = document.body.getElementsByTagName('pre')[0];
+    if (firstPRE && getText(firstPRE)===getText(document.body))
+      return firstPRE.innerHTML;
+    else
+      return document.body.innerHTML;
   }
 
 
