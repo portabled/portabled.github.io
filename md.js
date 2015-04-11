@@ -148,7 +148,7 @@ function bootME() {
     var uploadButton = cellRightMid.getElementsByTagName('button')[2];
     uploadButton.onclick = wrapTitleClick(uploadClick);
 
-    var versionBar = elem('div', {
+    var versionBar = ifr.window.elem('div', {
       innerHTML: 'Markdown&nbsp;v0.1',
       fontSize: '75%'
     }, cellRightBottom)
