@@ -55,8 +55,75 @@ function bootME() {
     var rendered = marked(bodyMD);
     ifr.document.body.innerHTML = rendered;
 
-    window['ifr'] = ifr;
+    // DEBUG
+    window['ifr_debug'] = ifr;
+
+    addTitle();
+
   }
+
+
+
+
+
+  function addTitle() {
+    var findH1 = ifr.document.getElementsByTagName('h1')[0] || ifr.document.getElementsByTagName('h2')[0];
+    var titleText = findH1 ? getText(findH1) : 'Markdown document';
+    document.title = titleText;
+
+    var domTitle = elem('h1', {
+      position: 'fixed',
+      top: 0, left: 0,
+      width: '100%',
+      opacity: 0,
+      background: 'white',
+      margin: 0,
+      padding: '0.5em',
+      text: titleText,
+      className: 'title-bar'
+    }, ifr.document.body);
+
+    var forceTitle = false;
+
+    ifr.window.onscroll = onscroll;
+    ifr.document.body.onclick = onclick;
+    updateTitleVisibility();
+
+    function onclick() {
+      forceTitle = !forceTitle;
+      updateTitleVisibility();
+    }
+
+    function onscroll() {
+      updateTitleVisibility();
+    }
+
+    function updateTitleVisibility() {
+      if (forceTitle) {
+        setVisibility(1);
+        return;
+      }
+
+      var top = ifr.document.body.scrollTop || ifr.window.pageYOffset || 0;
+
+      if (!top) {
+        setVisibility(0);
+      }
+      else if (top > domTitle.offsetHeight) {
+        setVisibility(1);
+      }
+      else {
+        var v = top / domTitle.offsetHeight;
+        setVisibility(v);
+      }
+    }
+
+    function setVisibility(v) {
+      domTitle.style.opacity = v;
+    }
+  }
+
+
 
 
   function markdownFromDOM() {
@@ -199,11 +266,11 @@ function bootME() {
     var ifrwin = ifr.contentWindow || ifr.window;
     var ifrdoc = ifrwin.document;
 
-    if (!ifrdoc.body) {
-      if (ifrdoc.open) ifrdoc.open();
-      ifrdoc.write('<'+'body'+'><'+'body'+'>');
-      if( ifrdoc.close) ifrdoc.close();
-    }
+    if (ifrdoc.open) ifrdoc.open();
+    ifrdoc.write(
+      '<'+'head'+'><'+'style'+'>'+getText(renderCSS)+'</'+'style'+'>\n'+
+      '<'+'body'+'><'+'body'+'>');
+    if (ifrdoc.close) ifrdoc.close();
 
     return {
       document: ifrdoc,
@@ -213,6 +280,47 @@ function bootME() {
   }
 
 
+
+  function renderCSS(){/*
+    body {
+      border: none;
+      background: white;
+      color: black;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+
+    table tr {
+      background: silver;
+      background: argb(0.2,0,0,0);
+    }
+
+    .title-bar {
+      border-bottom: solid 1px silver;
+
+      box-shadow: 0 0 30px 5px #DDD;
+      -moz-box-shadow: 0 0 30px 5px #DDD;
+      -webkit-box-shadow: 0 0 30px 5px #DDD;
+
+      z-index: 1000;
+
+      position:fixed !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      background: white;
+      margin: 0;
+      padding: 0.25em;
+
+    }
+  */}
 
 
   function define_marked() {
