@@ -83,6 +83,8 @@ function bootME() {
     var forceTitle = false;
 
     ifr.window.onscroll = onscroll;
+    window.onscroll = onscroll;
+    ifr.iframe.onscroll = onscroll;
     ifr.document.body.onclick = onclick;
     updateTitleVisibility();
 

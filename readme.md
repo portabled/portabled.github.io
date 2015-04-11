@@ -1,4 +1,5 @@
-function readme_md() {/*
+<script src=md.js></script>
+<pre>
 
 # Markdown Document
 
@@ -56,4 +57,6 @@ Funny you should ask for such things early in the morning.
 
 more of the same? 
 
-*/}
+
+
+</pre>
