@@ -2,6 +2,10 @@ bootME();
 
 function bootME() {
 
+  // avoiding double insertion
+  if (window.bootME_completed) return;
+  window.bootME_completed = true;
+
   window.onerror = function () {
     var dump = [];
     for (var i = 0; i < arguments.length;i++) dump.push(arguments[i]+(arguments[i] && arguments[i].stack ? ' '+arguments[i].stack : ''));
@@ -9,6 +13,7 @@ function bootME() {
   };
 
   var ifr;
+  var thisScript = document.scripts[document.scripts.length-1];
 
   earlyBoot();
   define_marked();
@@ -45,6 +50,20 @@ function bootME() {
   function onload() {
 
     if (!ifr) earlyBoot();
+
+    setTimeout(function() {
+      // ensure script is embedded in DOM
+      if (thisScript.src) {
+        var expandedScript = elem('script', document.body);
+        elem(expandedScript, { text: 'bootME()\n\n'+bootME });
+        thisScript.parentElement.removeChild(thisScript);
+        thisScript = expandedScript;
+      }
+    }, 10);
+
+    removeUnexpectedScriptInjections();
+
+
 
     var bodyMD = markdownFromDOM();
 
@@ -127,6 +146,19 @@ function bootME() {
   }
 
 
+
+
+
+  function removeUnexpectedScriptInjections() {
+    // ensure MITM-injected scripts are removed from DOM
+    for (var i = 0; i < document.scripts.length; i++) {
+      var s = document.scripts[i];
+      if (s!==thisScript) {
+        s.parentElement.removeChild(s);
+        i--;
+      }
+    }
+  }
 
 
   function markdownFromDOM() {
