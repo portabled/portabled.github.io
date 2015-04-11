@@ -158,10 +158,12 @@ function bootME() {
 
     function wrapTitleClick(handler) {
       return function (e) {
+        if (!e) e = window.event;
         // IE6 weirdness??
         if (typeof e.preventDefault === 'function')
           e.preventDefault();
-        e.cancelBubble = true;
+        if ('cancelBubble' in e)
+          e.cancelBubble = true;
 
         if (typeof handler === 'function') return handler() || false;
 
