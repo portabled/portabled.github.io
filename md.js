@@ -26,10 +26,7 @@ function bootME() {
         border: 'none'
       });
       elem(document.documentElement, {
-        margin: 0, padding: 0,
-        height: '100%',
-        overflow: 'hidden',
-        border: 'none'
+        margin: 0, padding: 0
       });
       ifr = createIFR();
 
