@@ -158,17 +158,14 @@ function bootME() {
 
     function wrapTitleClick(handler) {
       return function (e) {
-        try {
-          // IE6 weirdness??
-          if (e.preventDefault)
-            e.preventDefault();
-        }
-        catch (error) { }
+        // IE6 weirdness??
+        if (typeof e.preventDefault === 'function')
+          e.preventDefault();
         e.cancelBubble = true;
 
-        if (handler) return handler() || false;
+        if (typeof handler === 'function') return handler() || false;
 
-        return false;
+        return handler || false;
       };
     }
 
