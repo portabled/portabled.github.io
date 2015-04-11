@@ -8,8 +8,6 @@ function bootME() {
     alert(dump.join('\n'));
   };
 
-
-
   var ifr;
 
   earlyBoot();
@@ -35,6 +33,7 @@ function bootME() {
       });
     }
     else {
+      document.write('<'+'pre'+'>');
       // hide everything if possible
       try { document.documentElement.style.color = 'white'; }
       catch (err) { }
