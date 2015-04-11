@@ -158,8 +158,12 @@ function bootME() {
 
     function wrapTitleClick(handler) {
       return function (e) {
-        if (e.preventDefault)
-          e.preventDefault();
+        try {
+          // IE6 weirdness??
+          if (e.preventDefault)
+            e.preventDefault();
+        }
+        catch (error) { }
         e.cancelBubble = true;
 
         if (handler) return handler() || false;
