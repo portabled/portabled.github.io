@@ -69,7 +69,7 @@ function bootME() {
     document.title = titleText;
 
     var domTitle = ifr.window.elem('h1', {
-      position: window.ActiveXObject ? 'fixed' : 'absolute',
+      position: window.ActiveXObject ? 'absolute' : 'fixed',
       top: 0, left: 0,
       width: '100%',
       opacity: 0,
@@ -313,8 +313,6 @@ function bootME() {
 
       z-index: 1000;
 
-      position:fixed !important;
-      position: absolute;
       top: 0;
       left: 0;
 
