@@ -184,7 +184,7 @@ function bootME() {
     if (!ifrdoc.body) {
       if (ifrdoc.open) ifrdoc.open();
       ifrdoc.write('<'+'body'+'><'+'body'+'>');
-      if( ifrdoc.close) ifdoc.close();
+      if( ifrdoc.close) ifrdoc.close();
     }
 
     return {
