@@ -176,10 +176,14 @@ function bootME() {
       border: 'none',
       src: 'about:blank'
     },
-      this.document.body);
+    this.document.body);
 
     var ifrwin = ifr.contentWindow || ifr.window;
     var ifrdoc = ifrwin.document;
+
+    if (!ifrdoc) {
+      throw new Error('created iframe, but its document is '+ifrdoc+' :-(');
+    }
 
     if (!ifdoc.body) {
       if (ifrdoc.open) ifrdoc.open();
