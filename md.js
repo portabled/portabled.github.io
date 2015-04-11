@@ -181,11 +181,7 @@ function bootME() {
     var ifrwin = ifr.contentWindow || ifr.window;
     var ifrdoc = ifrwin.document;
 
-    if (!ifrdoc) {
-      throw new Error('created iframe, but its document is '+ifrdoc+' :-(');
-    }
-
-    if (!ifdoc.body) {
+    if (!ifrdoc.body) {
       if (ifrdoc.open) ifrdoc.open();
       ifrdoc.write('<'+'body'+'><'+'body'+'>');
       if( ifrdoc.close) ifdoc.close();
