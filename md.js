@@ -64,15 +64,21 @@ function bootME() {
       if (thisScript.src) {
         var expandedScript = elem('script', document.body);
         elem(expandedScript, {
-          text: 'bootME()\n\n'+bootME+
-            (window.codemirrorPAK ? '\n\n'+window.codemirrorPAK : '')
+          text: makeExpandedScriptText()
         });
         thisScript.parentElement.removeChild(thisScript);
         thisScript = expandedScript;
       }
 
       if (!window.codemirrorPAK)
-        setTimeout(beginDownloadCodeMirror, 1000);
+        setTimeout(function() {
+          if (window.codemirrorPAK || ifr.window.codemirrorPAK) return;
+          if (!ifr.window.oncodemirrorPAK) ifr.window.oncodemirrorPAK = function() {
+            setText(thisScript, makeExpandedScriptText());
+            ifr.window.oncodemirrorPAK = null;
+          };
+          beginDownloadCodeMirror();
+        }, 1000);
 
     }, 200);
 
@@ -139,7 +145,7 @@ function bootME() {
     ifr.window.onscroll = onscroll;
     window.onscroll = onscroll;
     ifr.iframe.onscroll = onscroll;
-    ifr.document.body.onclick = onclick;
+    renderDIV.onclick = onclick;
     updateTitleVisibility();
 
     domTitle.onclick = wrapTitleClick();
@@ -205,21 +211,29 @@ function bootME() {
       }
       else {
         editDIV = ifr.window.elem('div', {
-          width: '100%', height: '100%'
+          width: '100%', height: '100%',
+          paddingTop: '4em'
         }, ifr.document.body);
       }
 
-      if (!window.codemirrorPAK) {
+      if (window.codemirrorPAK) {
+        ifr.window.codemirrorPAK = window.codemirrorPAK;
+        completeSwitchingToEdit();
+      }
+      else {
         if (ifr.window.oncodemirrorPAK) return; // already queued
 
         ifr.window.oncodemirrorPAK = function() {
+
+          // embed CodeMirror into DOM
+          if (!thisScript.src) {
+            setText(thisScript, makeExpandedScriptText());
+          }
+
           completeSwitchingToEdit();
         };
 
         beginDownloadCodeMirror();
-      }
-      else {
-        completeSwitchingToEdit();
       }
     }
 
@@ -228,8 +242,12 @@ function bootME() {
 
     function completeSwitchingToEdit() {
       if (!editCM) {
-        ifr.window.CodeMirror = codemirrorPAK(ifr.window, ifr.document, getText, setText);
+        ifr.window.codemirrorPAK(ifr.window, ifr.document, getText, setText);
         editCM = ifr.window.CodeMirror(editDIV, { value: markdownText });
+        editCM.getWrapperElement().style.height = '100%';
+      }
+      else {
+        // nothing, it's already good
       }
     }
 
@@ -279,9 +297,16 @@ function bootME() {
 
   function beginDownloadCodeMirror() {
     var cmpakScript = ifr.document.createElement('script')
-    cmpakScript.src = 'https://portabled.github.com/codemirror-pak.js';
+    cmpakScript.src = 'https://portabled.github.io/codemirror-pak.js';
     ifr.document.body.appendChild(cmpakScript);
   }
+
+  function makeExpandedScriptText() {
+    var codemirrorPAK = window.codemirrorPAK || (ifr ? ifr.window.codemirrorPAK : null);
+    return 'bootME()\n\n'+bootME+
+      (codemirrorPAK ? '\n\n'+codemirrorPAK : '')
+  }
+
 
 
 
@@ -306,6 +331,7 @@ function bootME() {
       }
     }
   }
+
 
 
   function markdownFromDOM() {
