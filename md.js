@@ -74,7 +74,7 @@ function bootME() {
     var bodyMD = markdownFromDOM();
 
     var rendered = marked(bodyMD);
-    var renderDIV = elem('div', {
+    var renderDIV = ifr.window.elem('div', {
       className: 'render',
       innerHTML: rendered
     }, ifr.document.body);
