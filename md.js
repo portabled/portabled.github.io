@@ -71,8 +71,8 @@ function bootME() {
     var titleText = findH1 ? getText(findH1) : 'Markdown document';
     document.title = titleText;
 
-    var domTitle = elem('h1', {
-      position: 'fixed',
+    var domTitle = ifr.window.elem('h1', {
+      position: window.ActiveXObject ? 'fixed' : 'absolute',
       top: 0, left: 0,
       width: '100%',
       opacity: 0,
@@ -95,6 +95,11 @@ function bootME() {
     }
 
     function onscroll() {
+      if (window.ActiveXObject) {
+        var top = ifr.document.body.scrollTop || ifr.window.pageYOffset || 0;
+        domTitle.style.top = top+'px';
+      }
+
       updateTitleVisibility();
     }
 
@@ -265,6 +270,8 @@ function bootME() {
 
     var ifrwin = ifr.contentWindow || ifr.window;
     var ifrdoc = ifrwin.document;
+
+    ifrwin.elem = elem;
 
     if (ifrdoc.open) ifrdoc.open();
     ifrdoc.write(
