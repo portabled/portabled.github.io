@@ -47,7 +47,9 @@ function bootME() {
 
     if (!ifr) earlyBoot();
 
+alert(1);
     alert('ifr.window.elem '+ifr.window.elem)
+alert(2);
 
     var bodyMD = markdownFromDOM();
 
@@ -56,6 +58,8 @@ function bootME() {
 
     // DEBUG
     window['ifr_debug'] = ifr;
+
+alert(3);
 
     addTitle();
 
