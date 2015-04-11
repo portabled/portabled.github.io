@@ -74,7 +74,10 @@ function bootME() {
     var bodyMD = markdownFromDOM();
 
     var rendered = marked(bodyMD);
-    ifr.document.body.innerHTML = rendered;
+    var renderDIV = elem('div', {
+      className: 'render',
+      innerHTML: rendered
+    }, ifr.document.body);
 
     // DEBUG
     window['ifr_debug'] = ifr;
@@ -92,17 +95,34 @@ function bootME() {
     var titleText = findH1 ? getText(findH1) : 'Markdown document';
     document.title = titleText;
 
-    var domTitle = ifr.window.elem('h1', {
+    var domTitle = ifr.window.elem('div', {
       position: window.ActiveXObject ? 'absolute' : 'fixed',
       top: 0, left: 0,
       width: '100%',
+      zIndex: 1000,
       opacity: 0,
-      background: 'white',
-      margin: 0,
-      padding: '0.5em',
-      text: titleText,
-      className: 'title-bar'
+      className: 'title-bar',
+      innerHTML:
+        '<table style="width:100%;margin:0;padding:0;" cellspacing=0 cellpadding=0>'+
+        '<tr style="margin:0;padding:0;"><td style="margin:0;padding:0;" width=99% rowspan=3></td><td width=1 valign=top></td></tr>'+
+        '<tr style="margin:0;padding:0;"><td style="margin:0;padding:0;" valign=center></td></tr>'+
+        '<tr style="margin:0;padding:0;"><td style="margin:0;padding:0;" valign=bottom></td></tr>'+
+        '</table>'
     }, ifr.document.body);
+
+    var cells = domTitle.getElementsByTagName('td');
+    var cellTitle = cells[0];
+    var cellRightTop = cells[1];
+    var cellRightMid = cells[2];
+    var cellRightBottom = cells[3];
+
+    var domTitleText = ifr.window.elem('h1', {
+      text: titleText,
+      className: 'title-bar-title',
+      whiteSpace: 'nowrap',
+      overflowX: 'auto',
+      overflowY: 'hidden'
+    }, cellTitle);
 
     var forceTitle = false;
 
@@ -111,6 +131,62 @@ function bootME() {
     ifr.iframe.onscroll = onscroll;
     ifr.document.body.onclick = onclick;
     updateTitleVisibility();
+
+    domTitle.onclick = wrapTitleClick();
+
+
+    domTitleText.onclick = wrapTitleClick(titleTextClick);
+
+    cellRightMid.innerHTML =
+      '<table><tr><td><button> Edit </button></td>'+
+      '<td><button> Download </button></td>'+
+      '<td><button> Upload </button></td></tr></table>';
+    var editButton = cellRightMid.getElementsByTagName('button')[0];
+    editButton.onclick = wrapTitleClick(editClick);
+    var downloadButton = cellRightMid.getElementsByTagName('button')[1];
+    downloadButton.onclick = wrapTitleClick(downloadClick);
+    var uploadButton = cellRightMid.getElementsByTagName('button')[2];
+    uploadButton.onclick = wrapTitleClick(uploadClick);
+
+    var versionBar = elem('div', {
+      innerHTML: 'Markdown&nbsp;v0.1',
+      fontSize: '75%'
+    }, cellRightBottom)
+    
+
+
+
+    function wrapTitleClick(handler) {
+      return function (e) {
+        if (e.preventDefault)
+          e.preventDefault();
+        e.cancelBubble = true;
+
+        if (handler) return handler() || false;
+
+        return false;
+      };
+    }
+
+
+    function titleTextClick() {
+      // TODO: pop document navigation
+    }
+
+    function downloadClick() {
+      // TODO: download
+      alert('download!');
+    }
+
+    function uploadClick() {
+      // TODO: upload
+      alert('upload!');
+    }
+
+    function editClick() {
+      // TODO: edit
+      alert('edit!');
+    }
 
     function onclick() {
       forceTitle = !forceTitle;
@@ -361,15 +437,21 @@ function bootME() {
       background: white;
       color: black;
       overflow: auto;
+      margin: 10px;
     }
 
-    table {
+    h1 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    .render table {
       width: 100%;
       margin-top: 1em;
       margin-bottom: 1em;
     }
 
-    table tr {
+    .render table tr {
       background: silver;
       background: argb(0.2,0,0,0);
     }
@@ -381,17 +463,13 @@ function bootME() {
       -moz-box-shadow: 0 0 30px 5px #DDD;
       -webkit-box-shadow: 0 0 30px 5px #DDD;
 
-      z-index: 1000;
-
-      top: 0;
-      left: 0;
-
-      width: 100%;
       background: white;
-      margin: 0;
-      padding: 0.25em;
-
     }
+
+    .title-bar-title {
+      margin-left: 10px;
+    }
+
   */}
 
 
