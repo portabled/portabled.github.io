@@ -1,5 +1,9 @@
-<script src=md.js></script>
+<head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<style>body { white-space: pre; }</style>
+<script src=md.js></script>
+</head>
+
 
 # Markdown Document
 
