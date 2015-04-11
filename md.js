@@ -2,6 +2,14 @@ bootME();
 
 function bootME() {
 
+  window.onerror = function () {
+    var dump = [];
+    for (var i = 0; i < arguments.length;i++) dump.push(arguments[i]+(arguments[i] && arguments[i].stack ? ' '+arguments[i].stack : ''));
+    alert(dump.join('\n'));
+  };
+
+
+
   var ifr;
 
   earlyBoot();
