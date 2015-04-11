@@ -47,10 +47,6 @@ function bootME() {
 
     if (!ifr) earlyBoot();
 
-alert(1);
-    alert('ifr.window.elem '+ifr.window.elem)
-alert(2);
-
     var bodyMD = markdownFromDOM();
 
     var rendered = marked(bodyMD);
@@ -58,8 +54,6 @@ alert(2);
 
     // DEBUG
     window['ifr_debug'] = ifr;
-
-alert(3);
 
     addTitle();
 
@@ -274,14 +268,13 @@ alert(3);
     var ifrwin = ifr.contentWindow || ifr.window;
     var ifrdoc = ifrwin.document;
 
-    ifrwin.elem = elem;
-    alert('assigned? '+(ifrwin.elem===elem)+'\nifrwin.elem '+(ifrwin.elem+'').slice(0,15)+'\nelem '+(elem+'').slice(0,15));
-
     if (ifrdoc.open) ifrdoc.open();
     ifrdoc.write(
       '<'+'head'+'><'+'style'+'>'+getText(renderCSS)+'</'+'style'+'>\n'+
       '<'+'body'+'><'+'body'+'>');
     if (ifrdoc.close) ifrdoc.close();
+
+    ifrwin.elem = elem;
 
     return {
       document: ifrdoc,
