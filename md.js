@@ -44,8 +44,22 @@ function bootME() {
 
     if (!ifr) earlyBoot();
 
-    var bodyText = document.body.innerHTML;
-    var rendered = marked(bodyText);
+    var bodyMD;
+    if (window.ActiveXObject) {
+      var tmpPRE = document.createElement('pre');
+      for (var n = document.body.firstChild; n != null; n = n.nextSibling) {
+        if (n.tagName==='SCRIPT' || n.tagName==='STYLE') continue;
+        tmpPRE.appendChild(n.cloneNode(true));
+      }
+      bodyMD = tmpPRE.innerHTML;
+    }
+    else {
+      bodyMD = document.body.innerHTML;
+    }
+
+    alert(bodyMD);
+
+    var rendered = marked(bodyMD);
     ifr.document.body.innerHTML = rendered;
   }
 
