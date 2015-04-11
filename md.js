@@ -47,6 +47,8 @@ function bootME() {
 
     if (!ifr) earlyBoot();
 
+    alert('ifr.window.elem '+ifr.window.elem)
+
     var bodyMD = markdownFromDOM();
 
     var rendered = marked(bodyMD);
