@@ -44,7 +44,7 @@ function bootME() {
 
     if (!ifr) earlyBoot();
 
-    var bodyText = getText(document.body);
+    var bodyText = document.body.innerHTML;
     var rendered = marked(bodyText);
     ifr.document.body.innerHTML = rendered;
   }
