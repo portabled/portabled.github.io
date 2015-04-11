@@ -17,6 +17,9 @@ function bootME() {
   var ifr;
   var thisScript = document.scripts[document.scripts.length-1];
 
+  var renderDIV;
+  var markdownText;
+
   earlyBoot();
   define_marked();
   window.onload = onload;
@@ -60,21 +63,28 @@ function bootME() {
       // ensure script is embedded in DOM
       if (thisScript.src) {
         var expandedScript = elem('script', document.body);
-        elem(expandedScript, { text: 'bootME()\n\n'+bootME });
+        elem(expandedScript, {
+          text: 'bootME()\n\n'+bootME+
+            (window.codemirrorPAK ? '\n\n'+window.codemirrorPAK : '')
+        });
         thisScript.parentElement.removeChild(thisScript);
         thisScript = expandedScript;
       }
-    }, 10);
+
+      if (!window.codemirrorPAK)
+        setTimeout(beginDownloadCodeMirror, 1000);
+
+    }, 200);
 
     removeUnexpectedScriptInjections();
     removeUnneededFrames();
 
 
 
-    var bodyMD = markdownFromDOM();
+    markdownText = markdownFromDOM();
 
-    var rendered = marked(bodyMD);
-    var renderDIV = ifr.window.elem('div', {
+    rendered = marked(markdownText);
+    renderDIV = ifr.window.elem('div', {
       className: 'render',
       innerHTML: rendered
     }, ifr.document.body);
@@ -151,7 +161,8 @@ function bootME() {
     var versionBar = ifr.window.elem('div', {
       innerHTML: 'Markdown&nbsp;v0.1',
       fontSize: '75%'
-    }, cellRightBottom)
+    }, cellRightBottom);
+    // TODO: about box on versionBar click (plus licenses for CodeMirror and marked)
     
 
 
@@ -187,8 +198,43 @@ function bootME() {
     }
 
     function editClick() {
-      // TODO: edit
-      alert('edit!');
+
+      renderDIV.style.display = 'none';
+      if (editDIV) {
+        editDIV.style.display = 'block';
+      }
+      else {
+        editDIV = ifr.window.elem('div', {
+          width: '100%', height: '100%'
+        }, ifr.document.body);
+      }
+
+      if (!window.codemirrorPAK) {
+        if (ifr.window.oncodemirrorPAK) return; // already queued
+
+        ifr.window.oncodemirrorPAK = function() {
+          completeSwitchingToEdit();
+        };
+
+        beginDownloadCodeMirror();
+      }
+      else {
+        completeSwitchingToEdit();
+      }
+    }
+
+    var editDIV;
+    var editCM;
+
+    function completeSwitchingToEdit() {
+      if (!editCM) {
+        ifr.window.CodeMirror = codemirrorPAK(ifr.window, ifr.document, getText, setText);
+        editCM = ifr.window.CodeMirror(editDIV, { value: markdownText });
+      }
+    }
+
+    function switchToView() {
+      // TODO: hide editDIV, reapply markdown and show renderDIV
     }
 
     function onclick() {
@@ -231,6 +277,11 @@ function bootME() {
   }
 
 
+  function beginDownloadCodeMirror() {
+    var cmpakScript = ifr.document.createElement('script')
+    cmpakScript.src = 'https://portabled.github.com/codemirror-pak.js';
+    ifr.document.body.appendChild(cmpakScript);
+  }
 
 
 
