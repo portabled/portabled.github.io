@@ -68,6 +68,7 @@ function bootME() {
     var titleText = findH1 ? getText(findH1) : 'Markdown document';
     document.title = titleText;
 
+    alert('elem '+ifr.window.elem+', window.ActiveXObject '+window.ActiveXObject);
     var domTitle = ifr.window.elem('h1', {
       position: window.ActiveXObject ? 'fixed' : 'absolute',
       top: 0, left: 0,
