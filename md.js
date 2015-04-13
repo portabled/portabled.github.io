@@ -2,6 +2,9 @@ bootME();
 
 function bootME() {
 
+  var scriptRootPath = 'https://portabled.github.io/';
+  scriptRootPath = '';
+
   // avoiding double insertion
   if (window.bootME_completed) return;
   window.bootME_completed = true;
@@ -206,6 +209,11 @@ function bootME() {
 
     function editClick() {
 
+      if (editDIV && editDIV.style.display === 'block') {
+        applyEditsClick();
+        return;
+      }
+
       renderDIV.style.display = 'none';
       if (editDIV) {
         editDIV.style.display = 'block';
@@ -239,24 +247,32 @@ function bootME() {
       }
     }
 
+    function applyEditsClick() {
+
+      markdownRenderHTML = marked(editCM.getValue());
+      renderDIV.innerHTML = markdownRenderHTML;
+
+      renderDIV.style.display = 'block';
+      editDIV.style.display = 'none';
+    }
+
     var editDIV;
     var editCM;
 
     function completeSwitchingToEdit() {
       if (!editCM) {
         ifr.window.codemirrorPAK(ifr.window, ifr.document, getText, setText);
-        editCM = ifr.window.CodeMirror(editDIV, { value: markdownText, mode: 'gfm' });
+        editCM = ifr.window.CodeMirror(editDIV, { value: markdownText, mode: 'markdown' });
         editCM.getWrapperElement().style.height = '100%';
         setTimeout(function() {
           editCM.refresh();
         }, 1);
-
-        
-
       }
       else {
         // nothing, it's already good
       }
+
+
     }
 
     function switchToView() {
@@ -305,7 +321,7 @@ function bootME() {
 
   function beginDownloadCodeMirror() {
     var cmpakScript = ifr.document.createElement('script')
-    cmpakScript.src = 'https://portabled.github.io/codemirror-pak.js';
+    cmpakScript.src = scriptRootPath + 'codemirror-pak.js';
     ifr.document.body.appendChild(cmpakScript);
   }
 
@@ -528,9 +544,17 @@ function bootME() {
       margin: 10px;
     }
 
+    h1,.cm-header-1 {
+      font-size: 2em;
+    }
+
     h1 {
       margin-top: 20px;
       margin-bottom: 10px;
+    }
+
+    h2,.cm-header-2 {
+      font-size: 1.5em;
     }
 
     .render table {
