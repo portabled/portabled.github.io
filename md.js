@@ -47,7 +47,13 @@ function bootME() {
       });
     }
     else {
-      document.write('<'+'pre'+'>');
+      // injecting open comment is best to capture whitespace correctly
+      // (but it will fail on a closing comment)
+      //
+      // the alternative is to inject opening script tag
+      // (but that simply fails in Chrome altogether)
+      document.write('<'+'body'+'><'+'!--');
+
       // hide everything if possible
       try { document.documentElement.style.color = 'white'; }
       catch (err) { }
@@ -198,8 +204,52 @@ function bootME() {
     }
 
     function downloadClick() {
-      // TODO: download
-      alert('download!');
+      var filename = 'index.md.html';
+      downloadText(
+        filename,
+        [
+          '<'+'script'+' src="'+scriptRootPath+'/md.js"'+'><'+'/'+'script'+'>\n',
+          markdownText
+        ]);
+    }
+
+    function downloadText(filename, textChunks) {
+      try {
+        var blob = new Blob(textChunks, { type: 'application/octet-stream' });
+      }
+      catch (blobError) {
+        var win = document.createElement('iframe');
+        win.style.width = '100px';
+        win.style.height = '100px';
+        win.style.display = 'none';
+        document.body.appendChild(win);
+
+        setTimeout(function() {
+          var doc = win.document;
+          doc.open();
+          doc.write(content);
+          doc.close();
+
+          doc.execCommand('SaveAs', null, filename);
+        }, 200);
+
+        return;
+      }
+
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download', filename);
+      try {
+        // safer save method, supposed to work with FireFox
+        var evt = document.createEvent("MouseEvents");
+        evt.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        a.dispatchEvent(evt);
+      }
+      catch (e) {
+        a.click();
+      }
+
     }
 
     function uploadClick() {
@@ -364,7 +414,8 @@ function bootME() {
     var firstPRE = null;
     for (var child = document.body.firstChild; child; child = child.nextSibling) {
       if (child.tagName) {
-        if(/^(STYLE|SCRIPT|IFRAME)$/i.test(child.tagName)) continue;
+        if(/^(STYLE|SCRIPT|IFRAME)$/i.test(child.tagName||'')
+          && (child.getAttribute('type')||'').indexOf('markdown')<0) continue;
         elementCount++;
         if (!firstPRE && /^PRE$/i.test(child.tagName))
           firstPRE = child;
@@ -375,11 +426,14 @@ function bootME() {
     if (elementCount===1 && firstPRE)
       return firstPRE.innerHTML;
 
+    var lines = [];
     for (var i = 0; i < nodes.length; i++) {
       var n = nodes[i];
-      if (n.outerHTML)
+      if (/^SCRIPT$/i.test(n.tagName||''))
+        lines.push(getText(n));
+      else if ('outerHTML' in n)
         lines.push(n.outerHTML);
-      else if (n.nodeType>=3 && n.nodeType<=6 && n.nodeValue)
+      else if (((n.nodeType>=3 && n.nodeType<=6) || n.nodeType === 8) && n.nodeValue)
         lines.push(n.nodeValue);
     }
 
